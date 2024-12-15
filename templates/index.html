@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Threat Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            display: none;
+        }
+        .error {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cyber Threat Detection</h1>
+        <form id="threatForm">
+            <label for="destinationPort">Destination Port:</label>
+            <input type="number" id="destinationPort" name="destinationPort" required placeholder="e.g., 80">
+
+            <label for="flowDuration">Flow Duration:</label>
+            <input type="number" id="flowDuration" name="flowDuration" required placeholder="e.g., 123456">
+
+            <label for="totalFwdPackets">Total Forward Packets:</label>
+            <input type="number" id="totalFwdPackets" name="totalFwdPackets" required placeholder="e.g., 20">
+
+            <label for="totalBackwardPackets">Total Backward Packets:</label>
+            <input type="number" id="totalBackwardPackets" name="totalBackwardPackets" required placeholder="e.g., 10">
+
+            <button type="button" onclick="predictThreat()">Detect Threat</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function predictThreat() {
+            const destinationPort = document.getElementById('destinationPort').value;
+            const flowDuration = document.getElementById('flowDuration').value;
+            const totalFwdPackets = document.getElementById('totalFwdPackets').value;
+            const totalBackwardPackets = document.getElementById('totalBackwardPackets').value;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'none';
+
+            try {
+                // Example: Adjust URL and API integration as needed
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        Destination_Port: parseInt(destinationPort),
+                        Flow_Duration: parseInt(flowDuration),
+                        Total_Fwd_Packets: parseInt(totalFwdPackets),
+                        Total_Backward_Packets: parseInt(totalBackwardPackets)
+                    })
+                });
+
+                const data = await response.json();
+
+                resultDiv.style.display = 'block';
+                resultDiv.classList.remove('error');
+                resultDiv.textContent = `Prediction: ${data.prediction}`;
+
+            } catch (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.classList.add('error');
+                resultDiv.textContent = 'Error: Unable to detect threat. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>
