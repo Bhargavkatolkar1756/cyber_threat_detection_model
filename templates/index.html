@@ -55,7 +55,6 @@
             padding: 15px;
             background: #e8f5e9;
             border-left: 5px solid #4caf50;
-            display: none;
         }
         .error {
             background: #ffebee;
@@ -66,7 +65,7 @@
 <body>
     <div class="container">
         <h1>Cyber Threat Detection</h1>
-        <form id="threatForm">
+        <form action="/predict" method="POST">
             <label for="destinationPort">Destination Port:</label>
             <input type="number" id="destinationPort" name="destinationPort" required placeholder="e.g., 80">
 
@@ -79,47 +78,12 @@
             <label for="totalBackwardPackets">Total Backward Packets:</label>
             <input type="number" id="totalBackwardPackets" name="totalBackwardPackets" required placeholder="e.g., 10">
 
-            <button type="button" onclick="predictThreat()">Detect Threat</button>
+            <button type="submit">Detect Threat</button>
         </form>
 
-        <div id="result" class="result"></div>
+        {% if prediction_text %}
+        <div class="result">{{ prediction_text }}</div>
+        {% endif %}
     </div>
-
-    <script>
-        async function predictThreat() {
-            const destinationPort = document.getElementById('destinationPort').value;
-            const flowDuration = document.getElementById('flowDuration').value;
-            const totalFwdPackets = document.getElementById('totalFwdPackets').value;
-            const totalBackwardPackets = document.getElementById('totalBackwardPackets').value;
-
-            const resultDiv = document.getElementById('result');
-            resultDiv.style.display = 'none';
-
-            try {
-                // Example: Adjust URL and API integration as needed
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        Destination_Port: parseInt(destinationPort),
-                        Flow_Duration: parseInt(flowDuration),
-                        Total_Fwd_Packets: parseInt(totalFwdPackets),
-                        Total_Backward_Packets: parseInt(totalBackwardPackets)
-                    })
-                });
-
-                const data = await response.json();
-
-                resultDiv.style.display = 'block';
-                resultDiv.classList.remove('error');
-                resultDiv.textContent = `Prediction: ${data.prediction}`;
-
-            } catch (error) {
-                resultDiv.style.display = 'block';
-                resultDiv.classList.add('error');
-                resultDiv.textContent = 'Error: Unable to detect threat. Please try again.';
-            }
-        }
-    </script>
 </body>
 </html>
